@@ -1,0 +1,31 @@
+---
+# tasks file for ansible-vhost
+- name: copy vHost
+  template:
+    src: "{{ item.vHost | default('templates/vHost.j2') }}"
+    dest: "/etc/nginx/sites-available/{{ item.fqdn }}"
+    owner: root
+    group: root
+    mode: '0644'
+  vars:
+    NGINX_VHOST_FQDN: "{{ item.fqdn }}"
+    NGINX_REVERSE_PROXY_PORT: "{{ item.reverse_proxy_port | default('localhost') }}"
+  with_items:
+    - "{{ nginx_vhosts }}"
+  notify:
+    - restart nginx
+
+- name: activate vhost
+  file:
+    src: "/etc/nginx/sites-available/{{ item.fqdn }}"
+    dest: "/etc/nginx/sites-enabled/{{ item.fqdn }}"
+    state: link
+  with_items:
+    - "{{ nginx_vhosts }}"
+  notify:
+    - restart nginx
+
+- name: Verify Nginx config
+  command: nginx -t
+  changed_when: false
+

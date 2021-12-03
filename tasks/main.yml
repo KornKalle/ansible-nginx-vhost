@@ -9,7 +9,7 @@
     mode: '0644'
   vars:
     NGINX_VHOST_FQDN: "{{ item.fqdn }}"
-    NGINX_REVERSE_PROXY_PORT: "{{ item.reverse_proxy_port | default('localhost') }}"
+    NGINX_REVERSE_PROXY_PORT: "{{ item.reverse_proxy_port | default('80') }}"
   with_items:
     - "{{ nginx_vhosts }}"
   notify:

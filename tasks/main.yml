@@ -12,6 +12,7 @@
     NGINX_REVERSE_PROXY_PORT: "{{ item.reverse_proxy_port | default('80') }}"
   with_items:
     - "{{ nginx_vhosts }}"
+  when: item.state is not defined or item.state == 'present'
   notify:
     - restart nginx
 
@@ -22,6 +23,30 @@
     state: link
   with_items:
     - "{{ nginx_vhosts }}"
+  when: item.state is not defined or item.state == 'present'
+  notify:
+    - restart nginx
+
+- name: deactivate vhost
+  file:
+    dest: "/etc/nginx/sites-enabled/{{ item.fqdn }}"
+    state: absent
+  with_items:
+    - "{{ nginx_vhosts }}"
+  when: item.state is defined and item.state == 'absent'
+  notify:
+    - restart nginx
+
+- name: delete vHost
+  file:
+    dest: "/etc/nginx/sites-available/{{ item.fqdn }}"
+    owner: root
+    group: root
+    state: absent
+    mode: '0644'
+  with_items:
+    - "{{ nginx_vhosts }}"
+  when: item.state is defined and item.state == 'absent'
   notify:
     - restart nginx
 

@@ -10,6 +10,7 @@
   vars:
     NGINX_VHOST_FQDN: "{{ item.fqdn }}"
     NGINX_REVERSE_PROXY_PORT: "{{ item.reverse_proxy_port | default('80') }}"
+    NGINX_REVERSE_PROXY_TARGET_IP: "{{ item.reverse_proxy_ip | default('127.0.0.1') }}"
   with_items:
     - "{{ nginx_vhosts }}"
   when: item.state is not defined or item.state == 'present'

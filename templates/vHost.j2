@@ -16,7 +16,7 @@ server {
 	server_name www.{{ NGINX_VHOST_FQDN }} {{ NGINX_VHOST_FQDN }};
 	root /var/www/{{ NGINX_VHOST_FQDN }};
 	index index.html;
-    client_max_body_size 32m;
+    client_max_body_size {{ item.nginx_client_max_body_size | default('32M') }};
 
 	# Reverse Proxy
 	location / {
